@@ -437,7 +437,7 @@ public:
           excluded_symbols(excluded_symbols_), replacements(replacements_)
     {
     }
-    virtual RCP<const Basic> apply(const RCP<const Basic> &orig_expr)
+    RCP<const Basic> apply(const RCP<const Basic> &orig_expr) override
     {
         RCP<const Basic> expr = orig_expr;
         if (is_a_Atom(*expr)) {
@@ -501,7 +501,8 @@ void tree_cse(vec_pair &replacements, vec_basic &reduced_exprs,
 
     std::function<void(RCP<const Basic> & expr)> find_repeated;
     find_repeated = [&](RCP<const Basic> expr) -> void {
-        if (is_a_Number(*expr)) {
+        // Do not replace atoms
+        if (is_a_Number(*expr) or is_a<BooleanAtom>(*expr)) {
             return;
         }
 

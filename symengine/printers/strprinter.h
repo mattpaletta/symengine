@@ -192,6 +192,8 @@ public:
 #endif
     void bvisit(const NumberWrapper &x);
     void bvisit(const Tuple &x);
+    void bvisit(const IdentityMatrix &x);
+    void bvisit(const ZeroMatrix &x);
 
     std::string apply(const RCP<const Basic> &b);
     std::string apply(const vec_basic &v);
@@ -202,9 +204,9 @@ class JuliaStrPrinter : public BaseVisitor<JuliaStrPrinter, StrPrinter>
 {
 public:
     using StrPrinter::bvisit;
-    virtual void _print_pow(std::ostringstream &o, const RCP<const Basic> &a,
-                            const RCP<const Basic> &b);
-    virtual std::string get_imag_symbol();
+    void _print_pow(std::ostringstream &o, const RCP<const Basic> &a,
+                    const RCP<const Basic> &b) override;
+    std::string get_imag_symbol() override;
     void bvisit(const Constant &x);
     void bvisit(const NaN &x);
     void bvisit(const Infty &x);

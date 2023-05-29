@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 2.8.12)
 
+if (POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
+if (POLICY CMP0057)
+  cmake_policy(SET CMP0057 NEW) # needed for llvm >= 16
+endif ()
+
 set(CMAKE_USER_MAKE_RULES_OVERRIDE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/UserOverride.cmake)
 
 project(symengine LANGUAGES C CXX)
 
 set(SYMENGINE_MAJOR_VERSION 0)
-set(SYMENGINE_MINOR_VERSION 9)
-set(SYMENGINE_PATCH_VERSION 0)
+set(SYMENGINE_MINOR_VERSION 10)
+set(SYMENGINE_PATCH_VERSION 1)
 set(SYMENGINE_VERSION ${SYMENGINE_MAJOR_VERSION}.${SYMENGINE_MINOR_VERSION}.${SYMENGINE_PATCH_VERSION})
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
@@ -391,14 +399,16 @@ if (HAVE_SYMENGINE_GMP)
     endif()
 endif()
 
+include(GNUInstallDirs)  # For llvm>=16
+
 # LLVM
 set(WITH_LLVM no
     CACHE BOOL "Build with LLVM")
 
 if (WITH_LLVM)
-    set(SYMENGINE_LLVM_COMPONENTS asmparser core executionengine instcombine mcjit native nativecodegen scalaropts vectorize support transformutils)
+    set(SYMENGINE_LLVM_COMPONENTS asmparser core executionengine instcombine mcjit native nativecodegen scalaropts vectorize support transformutils passes)
     find_package(LLVM REQUIRED ${SYMENGINE_LLVM_COMPONENTS})
-    set(LLVM_MINIMUM_REQUIRED_VERSION "3.8")
+    set(LLVM_MINIMUM_REQUIRED_VERSION "4.0")
     if (LLVM_PACKAGE_VERSION LESS ${LLVM_MINIMUM_REQUIRED_VERSION})
 	    message(FATAL_ERROR "LLVM version found ${LLVM_PACKAGE_VERSION} is too old.
                              Require at least ${LLVM_MINIMUM_REQUIRED_VERSION}")
@@ -433,7 +443,6 @@ if (WITH_LLVM)
     include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
     set(HAVE_SYMENGINE_LLVM yes)
     set(PKGS ${PKGS} "LLVM")
-    message("LLVM VERSION: ${LLVM_VERSION}")
 endif()
 
 # BENCHMARKS
@@ -758,6 +767,7 @@ endif()
 
 message("WITH_LLVM: ${WITH_LLVM}")
 if (WITH_LLVM)
+    message("LLVM VERSION: ${LLVM_VERSION}")
     message("LLVM_INCLUDE_DIRS: ${LLVM_INCLUDE_DIRS}")
 endif()
 

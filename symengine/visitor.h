@@ -26,6 +26,7 @@
 #include <symengine/ntheory_funcs.h>
 #include <symengine/symengine_casts.h>
 #include <symengine/tuple.h>
+#include <symengine/matrix_expressions.h>
 
 namespace SymEngine
 {
@@ -261,6 +262,7 @@ public:
     }
 
     void bvisit(const MultiArgFunction &x);
+    void bvisit(const Piecewise &x);
 };
 
 template <typename Derived, typename First, typename... Rest>

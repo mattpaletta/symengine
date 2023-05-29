@@ -103,6 +103,26 @@ set(SRC
     refine.cpp
     simplify.cpp
     tuple.cpp
+    matrices/identity_matrix.cpp
+    matrices/matrix_symbol.cpp
+    matrices/zero_matrix.cpp
+    matrices/diagonal_matrix.cpp
+    matrices/immutable_dense_matrix.cpp
+    matrices/matrix_add.cpp
+    matrices/hadamard_product.cpp
+    matrices/matrix_mul.cpp
+    matrices/conjugate_matrix.cpp
+    matrices/transpose.cpp
+    matrices/trace.cpp
+    matrices/size.cpp
+    matrices/is_zero.cpp
+    matrices/is_real.cpp
+    matrices/is_symmetric.cpp
+    matrices/is_square.cpp
+    matrices/is_diagonal.cpp
+    matrices/is_lower.cpp
+    matrices/is_upper.cpp
+    matrices/is_toeplitz.cpp
 )
 
 if ("${SYMENGINE_INTEGER_CLASS}" STREQUAL "BOOSTMP")
@@ -200,6 +220,7 @@ set(HEADERS
     printers/strprinter.h
     printers/latex.h
     printers/unicode.h
+    printers/stringbox.h
     printers.h
     rational.h
     real_double.h
@@ -228,6 +249,20 @@ set(HEADERS
     simplify.h
     utilities/stream_fmt.h
     tuple.h
+    matrix_expressions.h
+    matrices/matrix_expr.h
+    matrices/identity_matrix.h
+    matrices/matrix_symbol.h
+    matrices/zero_matrix.h
+    matrices/diagonal_matrix.h
+    matrices/immutable_dense_matrix.h
+    matrices/matrix_add.h
+    matrices/hadamard_product.h
+    matrices/matrix_mul.h
+    matrices/conjugate_matrix.h
+    matrices/size.h
+    matrices/transpose.h
+    matrices/trace.h
 )
 
 if (NOT WITH_SYSTEM_CEREAL)
@@ -274,8 +309,12 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set_source_files_properties(parser/parser.tab.cc PROPERTIES COMPILE_FLAGS "-Wno-conversion")
 endif()
 
-if (WITH_LLVM AND NOT ${LLVM_VERSION} VERSION_LESS "10.0.0")
-    set_target_properties(symengine PROPERTIES CXX_STANDARD 14 CXX_EXTENSIONS OFF CXX_STANDARD_REQUIRED yes)
+if (WITH_LLVM)
+    if (NOT ${LLVM_VERSION} VERSION_LESS "16.0.0")
+        set_target_properties(symengine PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF CXX_STANDARD_REQUIRED yes)
+    elseif (NOT ${LLVM_VERSION} VERSION_LESS "10.0.0")
+        set_target_properties(symengine PROPERTIES CXX_STANDARD 14 CXX_EXTENSIONS OFF CXX_STANDARD_REQUIRED yes)
+    endif()
 endif()
 
 if (WITH_SYMENGINE_TEUCHOS)
